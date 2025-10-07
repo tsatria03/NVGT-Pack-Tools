@@ -1,17 +1,3 @@
-double clamp(double value, double min, double max)
-{
-value=value<min? min:value;
-value=value>max? max:value;
-return value;
-}
-double min(double a, double b)
-{
-return (a < b) ? a : b;
-}
-double max(double a, double b)
-{
-return (a > b) ? a : b;
-}
 bool string_file_encrypt(string input_file, string output_file, string key)
 {
     file f;
@@ -39,6 +25,36 @@ return false;
 output.write(decrypted_content);
 output.close();
 return true;
+}
+bool string_starts_with(const string& in str, const string& in start)
+{
+if (str.length()>=start.length())
+{
+return (str.substr(0, start.length()) == start);
+}
+return false;
+}
+bool string_ends_with(const string& in str,const string& in ending)
+{
+if (str.length()>=ending.length())
+{
+return (str.substr(str.length()-ending.length())==ending);
+}
+return false;
+}
+double clamp(double value, double min, double max)
+{
+value=value<min? min:value;
+value=value>max? max:value;
+return value;
+}
+double min(double a, double b)
+{
+return (a < b) ? a : b;
+}
+double max(double a, double b)
+{
+return (a > b) ? a : b;
 }
 string file_encrypt(const string& encrypted_content, const string& encryption_key)
 {

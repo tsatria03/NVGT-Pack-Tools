@@ -1,3 +1,5 @@
+#pragma asset data
+#pragma document docks
 #include"includes/includes.nvgt"string[] contents;
 bool use_key = false;
 bool strpack = false;

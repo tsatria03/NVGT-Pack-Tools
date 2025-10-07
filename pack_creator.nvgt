@@ -1,3 +1,5 @@
+#pragma asset data
+#pragma document docks
 #include"includes/includes.nvgt"
 bool encrypt = false;
 bool silent = false;
@@ -12,9 +14,11 @@ pack pfile;
 sound@ progress_sound;
 void main()
 {
+    if (!directory_exists("data"))
+        directory_create("data");
     if (COMMAND_LINE == "/s")
         silent = true;
-    if (file_exists("pack.pk"))
+    if (file_exists("data/pack.pk"))
     {
         int use_saved = (silent ? 1 : question("File was found.", "Would you like to use the existing saved data?"));
         if (use_saved == 1)
@@ -59,13 +63,13 @@ exit();
                 encryption_key = hex_to_string(string_trim_left(encryption_key, 10));
             }
         }
-        f.open("pack.pk", "wb");
+        f.open("data/pack.pk", "wb");
         f.write(filename + "{:}" + foldername + "{:}" + (encrypt ? "1{:}" + encryption_key : "0"));
         f.close();
     }
     else
     {
-        f.open("pack.pk", "rb");
+        f.open("data/pack.pk", "rb");
         string[] data = string_split(f.read(), "{:}", true);
         f.close();
         filename = data[0];

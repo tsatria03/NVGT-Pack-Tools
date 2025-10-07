@@ -1,1 +1,1 @@
-This particular package is inspired by the Masonian toolset, and brought to you by x0.
+This package was inspired by the Masonian toolset, and is brought to you by x0.
