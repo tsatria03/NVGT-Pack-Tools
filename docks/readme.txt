@@ -1,5 +1,5 @@
 NVGT Pack Tools:
-Just another frontend to the relatively simple pack_file object that can be used for creation and extraction of game data. Also inspired by the Masonian toolset.
+Just another frontend to the relatively simple pack_file object that can be used for creation and extraction of game data.
 This frontend adds some features that distinguish it from other freely available frontends, such as the ability to easily work with directory trees of multiple levels during creation and extraction, on-the-fly encryption of varying complexities, and to be useful to those who may have the knowhow to simply dump keys from the executables themselves.
 Most of it you don't have to do any extra work, however here are some tips to get you the most use out of this toolset.
 The directory tree practice that is the most common is to separate the paths with a slash, and to not prepend the root folder. So the creator and extracter honor this general convension. This means that if you create your game data using this toolset, you would reference a file in root\folder1\file1.txt as folder1/file1.txt within the pack_file calls. This also means that you can extract trees built by this toolset or other custom-made toolsets for directories, such as that in use in crazy party.
@@ -12,4 +12,3 @@ hex::data: causes the following data to be interpreted as a hex string where two
 str::data: will interpret the key as it follows, except it will switch the crypto mode from file based encryption to string based encryption. String based encryption is useful in situations where certain games do not use the set_sound_decryption_key function at all, and instead have some higher level function that will read a sound from the pack file and string_decrypt the data before passing it to a sound system. This is the case with games that encrypt their sounds and use a sound engine other than NVGT's default one.
 If you wish to specify a hex key in string crypto mode, you would have to go str::hex::data. Going hex::str::data would cause the str:: check to not work as the data would have already been converted to hex. File::data is always interpreted first, such as file::gamekey.txt
 I hope you get use out of this pack toolset, not just for dumping game's sounds but also for creating your own data with the most flexibility!
-This particular package is brought to you by x0.
