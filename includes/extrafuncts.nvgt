@@ -64,4 +64,16 @@ string file_decrypt(const string& encrypted_content, const string& encryption_ke
 {
 return string_decrypt(encrypted_content, encryption_key);
 }
-
+string trim(const string&in str)
+{
+string result = str;
+while (result.length() > 0 && (string_left(result, 1) == " " || string_left(result, 1) == "\n" || string_left(result, 1) == "\r"))
+{
+result = string_trim_left(result, 1);
+}
+while (result.length() > 0 && (string_right(result, 1) == " " || string_right(result, 1) == "\n" || string_right(result, 1) == "\r"))
+{
+result = string_trim_right(result, 1);
+}
+return result;
+}

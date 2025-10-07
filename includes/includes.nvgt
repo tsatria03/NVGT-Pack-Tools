@@ -1,5 +1,30 @@
 #include "bgt_compat.nvgt"
 #include "sound_pool.nvgt"
 #include"audioutils.nvgt"
+#include"creator.nvgt"
+#include"extractor.nvgt"
 #include"extrafuncts.nvgt"
+#include"form.nvgt"
+#include"lister.nvgt"
+#include"speech.nvgt"
+#include"virtual_dialogs.nvgt"
+bool use_key = false;
+bool strpack = false;
+bool encrypt = false;
+bool silent = false;
+bool cont = true;
+string[] contents;
+string encryption_key;
+string filename;
+string foldername;
+string[] file_list;
+string decrypt_key;
+string end;
+string version="1.0";
+file f;
+file temp;
+pack pfile;
+pack obj;
+sound@ progress_sound;
+virtual_dialogs vd;
 typedef uint8 usmall; typedef int8 small;

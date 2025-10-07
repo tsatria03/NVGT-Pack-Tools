@@ -1,5 +1,6 @@
 New in 1.0.
-Made it so the pack.pk file gets stored in the data folder instead of the root folder during it's creation process.
+Revamped the entire toolset. The pack creator, extractor, and lister scripts are now combined into one single program that is prompt based moving forward.
+Made it so the pack.pk file gets stored in the data folder instead of the root folder during the creation process.
 Resolved an issue where packs became very unreadable when fully encrypted.
 Added some missing features of the toolset that were discussed in the readme.
 Converted the entire toolset to nvgt.

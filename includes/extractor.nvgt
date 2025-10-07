@@ -1,24 +1,13 @@
-#pragma asset data
-#pragma document docks
-#include"includes/includes.nvgt"string[] contents;
-bool use_key = false;
-bool strpack = false;
-string filename;
-string end;
-string decrypt_key;
-file temp;
-pack pfile;
-sound@ progress_sound;
-void main()
+void extract_pack()
 {
     filename = input_box("Pack Extractor", "Enter the name of the pack file to extract");
     if (filename == "")
     {
         alert("Error", "You may not extract an empty pack!");
-        exit();
+        main();
     }
     decrypt_key = input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
-    if (get_last_error() == -12) exit();
+    if (get_last_error() == -12) main();
     if (decrypt_key != "")
     {
         use_key = true;
@@ -27,7 +16,7 @@ void main()
             if (!temp.open(string_trim_left(decrypt_key, 6), "rb"))
             {
                 alert("Error", "Failed to open key file.");
-                exit();
+                main();
             }
             decrypt_key = temp.read();
             temp.close();
@@ -48,17 +37,17 @@ void main()
         }
     }
     end = input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
-    if (get_last_error() == -12) exit();
+    if (get_last_error() == -12) main();
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
         alert("Error", "Could not open the specified pack file.");
-        exit();
+        main();
     }
     contents = pfile.list_files();
     if (contents.length() == 0)
     {
         alert("Error", "No files found in this pack.");
-        exit();
+        main();
     }
     alert("Get Ready", contents.length() + " files are about to be extracted!");
     if (!directory_exists("packs"))

@@ -1,18 +1,4 @@
-#pragma asset data
-#pragma document docks
-#include"includes/includes.nvgt"
-bool encrypt = false;
-bool silent = false;
-bool cont = true;
-bool strpack = false;
-string encryption_key;
-string filename;
-string foldername;
-string[] file_list;
-file f;
-pack pfile;
-sound@ progress_sound;
-void main()
+void create_pack()
 {
     if (!directory_exists("data"))
         directory_create("data");
@@ -30,22 +16,22 @@ void main()
         if (filename == "")
 {
 alert("Error", "You may not create an empty pack!");
-exit();
+main();
 }
         foldername = input_box("Pack Creator", "Enter the path containing files to pack");
-        if (foldername == "") exit();
+        if (foldername == "") main();
         int answer = question("Pack Creator", "Would you like these files to be encrypted?");
         if (answer == 1)
         {
             encrypt = true;
             encryption_key = input_box("Pack Creator", "Enter the encryption key for this pack.");
-            if (encryption_key == "") exit();
+            if (encryption_key == "") main();
             if (string_left(encryption_key, 6) == "file::")
             {
                 if (!f.open(string_trim_left(encryption_key, 6), "rb"))
                 {
                     alert("Error", "Failed to open key file.");
-                    exit();
+                    main();
                 }
                 encryption_key = f.read();
                 f.close();
@@ -80,12 +66,12 @@ exit();
     if (!directory_exists(foldername))
     {
         if (!silent) alert("Error", "Folder does not exist!");
-        exit();
+        main();
     }
     if (!pfile.open(filename, PACK_OPEN_MODE_CREATE))
     {
         alert("Error", "Failed to create pack file!");
-        exit();
+        main();
     }
     find_stuff(foldername, foldername);
     if (!silent)
@@ -107,7 +93,7 @@ for (uint i = 0; i < file_list.length(); i++)
     }
     pfile.close();
     if (!silent) alert("Success!", "Files were added successfully!");
-    exit();
+    main();
 }
 void find_stuff(string base, string path)
 {
