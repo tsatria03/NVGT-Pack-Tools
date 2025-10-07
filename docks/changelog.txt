@@ -1,0 +1,4 @@
+New in 1.0.
+Resolved an issue where packs became very unreadable when fully encrypted.
+Added some missing features of the toolset that were discussed in the readme.
+Converted the entire toolset to nvgt.

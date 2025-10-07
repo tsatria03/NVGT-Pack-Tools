@@ -1,0 +1,118 @@
+#include"includes/includes.nvgt"string[] contents;
+bool use_key = false;
+bool strpack = false;
+string filename;
+string end;
+string decrypt_key;
+file temp;
+pack pfile;
+sound@ progress_sound;
+void main()
+{
+    filename = input_box("Pack Extractor", "Enter the name of the pack file to extract");
+    if (filename == "")
+    {
+        alert("Error", "You may not extract an empty pack!");
+        exit();
+    }
+    decrypt_key = input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
+    if (get_last_error() == -12) exit();
+    if (decrypt_key != "")
+    {
+        use_key = true;
+        if (string_left(decrypt_key, 6) == "file::")
+        {
+            if (!temp.open(string_trim_left(decrypt_key, 6), "rb"))
+            {
+                alert("Error", "Failed to open key file.");
+                exit();
+            }
+            decrypt_key = temp.read();
+            temp.close();
+        }
+        if (string_left(decrypt_key, 5) == "str::")
+        {
+            strpack = true;
+            decrypt_key = string_trim_left(decrypt_key, 5);
+        }
+        if (string_left(decrypt_key, 5) == "hex::")
+        {
+            decrypt_key = hex_to_string(string_trim_left(decrypt_key, 5));
+        }
+        if (string_left(decrypt_key, 10) == "str::hex::")
+        {
+            strpack = true;
+            decrypt_key = hex_to_string(string_trim_left(decrypt_key, 10));
+        }
+    }
+    end = input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
+    if (get_last_error() == -12) exit();
+    if (!pfile.open(filename, PACK_OPEN_MODE_READ))
+    {
+        alert("Error", "Could not open the specified pack file.");
+        exit();
+    }
+    contents = pfile.list_files();
+    if (contents.length() == 0)
+    {
+        alert("Error", "No files found in this pack.");
+        exit();
+    }
+    alert("Get Ready", contents.length() + " files are about to be extracted!");
+    if (!directory_exists("packs"))
+        directory_create("packs");
+    string base_dir = "packs/" + filename;
+    if (!directory_exists(base_dir))
+        directory_create(base_dir);
+    show_window("Extracting...");
+    wait(5);
+    double prev_percent = -1;
+    for (uint i = 0; i < contents.length(); i++)
+    {
+        double percent = ((i + 1.0) / contents.length()) * 100.0;
+        percent = round(percent, 0);
+        if (percent != prev_percent)
+        {
+            beep_percentage(int(percent));
+            prev_percent = percent;
+        }
+        string relative_path = contents[i];
+        string output_path = base_dir + "/" + relative_path + end;
+        create_subfolders(output_path);
+        extract_file(pfile, relative_path, output_path);
+    }
+    pfile.close();
+    alert("Success", "Extraction completed. " + contents.length() + " files have been extracted to " + base_dir);
+}
+void create_subfolders(string filepath)
+{
+    string[] parts = string_split(filepath, "/", true);
+    if (parts.length() <= 1) return;
+    parts.resize(parts.length() - 1);
+    string path;
+    for (uint i = 0; i < parts.length(); i++)
+    {
+        path += parts[i];
+        if (i < parts.length() - 1) path += "/";
+        if (!directory_exists(path)) directory_create(path);
+    }
+}
+void extract_file(pack@ pf, const string&in filename, const string&in outfile)
+{
+    uint size = pf.get_file_size(filename);
+    string content = pf.read_file(filename, 0, size);
+    if (use_key)
+    {
+        string decrypted;
+        if (strpack)
+            decrypted = string_decrypt(content, decrypt_key);
+        else
+            decrypted = file_decrypt(content, decrypt_key);
+        if (decrypted != "")
+            content = decrypted;
+    }
+    file f;
+    f.open(outfile, "wb");
+    f.write(content);
+    f.close();
+}

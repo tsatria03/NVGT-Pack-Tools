@@ -1,0 +1,116 @@
+#include"includes/includes.nvgt"
+bool encrypt = false;
+bool silent = false;
+bool cont = true;
+bool strpack = false;
+string encryption_key;
+string filename;
+string foldername;
+string[] file_list;
+file f;
+pack pfile;
+sound@ progress_sound;
+void main()
+{
+    if (COMMAND_LINE == "/s")
+        silent = true;
+    if (file_exists("pack.pk"))
+    {
+        int use_saved = (silent ? 1 : question("File was found.", "Would you like to use the existing saved data?"));
+        if (use_saved == 1)
+            cont = false;
+    }
+    if (cont)
+    {
+        filename = input_box("Pack Creator", "Enter the name of the pack file to create");
+        if (filename == "")
+{
+alert("Error", "You may not create an empty pack!");
+exit();
+}
+        foldername = input_box("Pack Creator", "Enter the path containing files to pack");
+        if (foldername == "") exit();
+        int answer = question("Pack Creator", "Would you like these files to be encrypted?");
+        if (answer == 1)
+        {
+            encrypt = true;
+            encryption_key = input_box("Pack Creator", "Enter the encryption key for this pack.");
+            if (encryption_key == "") exit();
+            if (string_left(encryption_key, 6) == "file::")
+            {
+                if (!f.open(string_trim_left(encryption_key, 6), "rb"))
+                {
+                    alert("Error", "Failed to open key file.");
+                    exit();
+                }
+                encryption_key = f.read();
+                f.close();
+            }
+            if (string_left(encryption_key, 5) == "str::")
+            {
+                strpack = true;
+                encryption_key = string_trim_left(encryption_key, 5);
+            }
+            if (string_left(encryption_key, 5) == "hex::")
+                encryption_key = hex_to_string(string_trim_left(encryption_key, 5));
+            if (string_left(encryption_key, 10) == "str::hex::")
+            {
+                strpack = true;
+                encryption_key = hex_to_string(string_trim_left(encryption_key, 10));
+            }
+        }
+        f.open("pack.pk", "wb");
+        f.write(filename + "{:}" + foldername + "{:}" + (encrypt ? "1{:}" + encryption_key : "0"));
+        f.close();
+    }
+    else
+    {
+        f.open("pack.pk", "rb");
+        string[] data = string_split(f.read(), "{:}", true);
+        f.close();
+        filename = data[0];
+        foldername = data[1];
+        encrypt = (string_to_number(data[2]) == 1);
+        if (encrypt) encryption_key = data[3];
+    }
+    if (!directory_exists(foldername))
+    {
+        if (!silent) alert("Error", "Folder does not exist!");
+        exit();
+    }
+    if (!pfile.open(filename, PACK_OPEN_MODE_CREATE))
+    {
+        alert("Error", "Failed to create pack file!");
+        exit();
+    }
+    find_stuff(foldername, foldername);
+    if (!silent)
+        alert("Pack Creator", "There are " + file_list.length() + " files in the pack. Press OK to start packing!");
+    show_window("Packing...");
+    wait(5);
+    int percent = -1;
+for (uint i = 0; i < file_list.length(); i++)
+{
+    double progress = (double(i) / double(file_list.length())) * 100.0;
+    int rounded = int(progress);
+    if (rounded != percent)
+    {
+        percent = rounded;
+        beep_percentage(percent);
+    }
+    string relative = string_replace(file_list[i], foldername + "/", "", true);
+        pfile.add_file(file_list[i], relative);
+    }
+    pfile.close();
+    if (!silent) alert("Success!", "Files were added successfully!");
+    exit();
+}
+void find_stuff(string base, string path)
+{
+    string[] dirs = find_directories(path + "\\*");
+    string[] files = find_files(path + "\\*.*");
+    for (uint i = 0; i < files.length(); i++)
+        file_list.insert_last(path + "/" + files[i]);
+    for (uint j = 0; j < dirs.length(); j++)
+        find_stuff(base, path + "/" + dirs[j]);
+}

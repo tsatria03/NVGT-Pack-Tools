@@ -1,0 +1,51 @@
+double clamp(double value, double min, double max)
+{
+value=value<min? min:value;
+value=value>max? max:value;
+return value;
+}
+double min(double a, double b)
+{
+return (a < b) ? a : b;
+}
+double max(double a, double b)
+{
+return (a > b) ? a : b;
+}
+bool string_file_encrypt(string input_file, string output_file, string key)
+{
+    file f;
+    if (!f.open(input_file, "rb")) return false;
+    string text = f.read();
+    f.close();
+    text = string_encrypt(text, key);
+    if (text == "") return false;
+    if (!f.open(output_file, "wb")) return false;
+    f.write(text);
+    f.close();
+    return true;
+}
+bool string_file_decrypt(const string& input_file, const string& output_file, const string& encryption_key)
+{
+file input;
+if (!input.open(input_file, "rb"))
+return false;
+string encrypted_content = input.read();
+input.close();
+string decrypted_content = string_decrypt(encrypted_content, encryption_key);
+file output;
+if (!output.open(output_file, "wb"))
+return false;
+output.write(decrypted_content);
+output.close();
+return true;
+}
+string file_encrypt(const string& encrypted_content, const string& encryption_key)
+{
+return string_encrypt(encrypted_content, encryption_key);
+}
+string file_decrypt(const string& encrypted_content, const string& encryption_key)
+{
+return string_decrypt(encrypted_content, encryption_key);
+}
+
