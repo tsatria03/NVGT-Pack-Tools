@@ -4,8 +4,8 @@ void main()
     bool running = true;
     while (running)
     {
-        wait(5); // small pause between menu refreshes
-int choice = message_box("NVGT Pack Tools", "Welcome to NVGT Pack Tools! Select an option below: ", {"`Create a new pack", "Extract an existing pack", "List the contents  of a pack.", "~Exit"}, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
+        wait(5);
+int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVGT Pack Tools! Please select an option.", {"`Create a new pack", "Extract an existing pack", "List the contents  of a pack", "~Exit"}, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
         if (choice == 1)
         {
             create_pack();
@@ -18,7 +18,7 @@ int choice = message_box("NVGT Pack Tools", "Welcome to NVGT Pack Tools! Select 
         {
             list_pack();
         }
-        else if (choice == 4) // Exit
+        else if (choice == 4)
         {
             running = false;
         }
@@ -27,5 +27,5 @@ int choice = message_box("NVGT Pack Tools", "Welcome to NVGT Pack Tools! Select 
             alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
         }
     }
-    alert("Goodbye!", "Thank you for using NVGT Pack Tools.", false, MESSAGE_BOX_INFORMATION);
+    alert("Goodbye", "Thank you for using NVGT Pack Tools! Exiting.", false, MESSAGE_BOX_INFORMATION);
 }
