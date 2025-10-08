@@ -31,7 +31,7 @@ int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVG
             alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
         }
     }
-    alert("Goodbye", "Thank you for using NVGT Pack Tools! Exiting.", false, MESSAGE_BOX_INFORMATION);
+    alert("Goodbye", "Thanks for using NVGT Pack Tools! Exiting.", false, MESSAGE_BOX_INFORMATION);
 }
 void create_pack()
 {
