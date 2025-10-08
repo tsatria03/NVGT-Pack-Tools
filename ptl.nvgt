@@ -1,31 +1,23 @@
-#pragma asset data
-#pragma document docks
 #include"includes/includes.nvgt"
 void main()
 {
-    show_window("NVGT-Pack-Tools, version"+version);
-wait(500);
-vd.set_disallowed_chars("1234567890 !@#$%^&*()[]{};:'\"\\|,.<>_?/+-=`~", false);
-    string choice = vd.input_box("NVGT-Pack-Tools", "Welcome to NVGT Pack Tools! Type create to make a new pack, extract to extract an existing pack, and list to list the contents of a pack. Press Escape to exit.");
+    string choice = input_box("NVGT-Pack-Tools, version"+version+".", "Welcome to NVGT Pack Tools! Type c to make a new pack, e to extract an existing pack, and l to list the contents of a pack. Press Escape to exit.");
     if (choice == "")
     {
 alert("Error", "No option selected. exiting.");
         exit();
     }
     choice = string_to_lower_case(trim(choice));
-    if (choice == "create")
+    if (choice == "c")
     {
-        wait(500);
 create_pack();
     }
-    else if (choice == "extract")
+    else if (choice == "e")
     {
-        wait(500);
 extract_pack();
     }
-    else if (choice == "list")
+    else if (choice == "l")
     {
-        wait(500);
 list_pack();
     }
     else

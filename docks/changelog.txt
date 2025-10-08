@@ -1,4 +1,6 @@
 New in 1.0.
+Made it so you no longer have to type the entire word of a promt to do what you want in the app. For example, instead of having to type the word extract to launch the pack extractor, you can just simply type the letter e, and it will essentially do the same thing.
+Reduced the time it takes to load the program significantly. This program will no longer use virtual dialogs to reveal input prompts moving forward.
 Revamped the entire toolset. The pack creator, extractor, and lister scripts are now combined into one single program that will be prompt based moving forward.
 Made it so the pack.pk file now gets stored in the data folder instead of the root folder during the creation process.
 Resolved an issue where packs became very unreadable when fully encrypted.
