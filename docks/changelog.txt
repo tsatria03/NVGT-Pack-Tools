@@ -1,4 +1,5 @@
 New in 1.0.
+Added the ability to view the information for a particular pack in the new pack viewer. You can access this function in the main interface of the app.
 Fixed a bug where trying to abort the entire app would cause one of the functions to execute itself without any user input received from the main interface.
 Made this app completely menu based. This toolset will no longer be prompt based moving forward.
 Made it so you no longer have to type the entire word of a promt to do what you want in the app. For example, instead of having to type the word extract to launch the pack extractor, you can just simply type the letter e, and it will do the same thing.

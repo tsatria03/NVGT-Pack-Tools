@@ -4,10 +4,7 @@
 #include "bgt_compat.nvgt"
 #include "sound_pool.nvgt"
 #include"audioutils.nvgt"
-#include"creator.nvgt"
-#include"extractor.nvgt"
 #include"extrafuncts.nvgt"
-#include"lister.nvgt"
 
 bool use_key = false;
 bool strpack = false;
