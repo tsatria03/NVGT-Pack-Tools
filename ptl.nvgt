@@ -1,28 +1,31 @@
-#include"includes/includes.nvgt"
+#include "includes/includes.nvgt"
 void main()
 {
-    string choice = input_box("NVGT-Pack-Tools, version"+version+".", "Welcome to NVGT Pack Tools! Type c to make a new pack, e to extract an existing pack, and l to list the contents of a pack. Press Escape to exit.");
-    if (choice == "")
+    bool running = true;
+    while (running)
     {
-alert("Error", "No option selected. exiting.");
-        exit();
+        wait(5); // small pause between menu refreshes
+int choice = message_box("NVGT Pack Tools", "Welcome to NVGT Pack Tools! Select an option below: ", {"`Create a new pack", "Extract an existing pack", "List the contents  of a pack.", "~Exit"}, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
+        if (choice == 1)
+        {
+            create_pack();
+        }
+        else if (choice == 2)
+        {
+            extract_pack();
+        }
+        else if (choice == 3)
+        {
+            list_pack();
+        }
+        else if (choice == 4) // Exit
+        {
+            running = false;
+        }
+        else
+        {
+            alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
+        }
     }
-    choice = string_to_lower_case(trim(choice));
-    if (choice == "c")
-    {
-create_pack();
-    }
-    else if (choice == "e")
-    {
-extract_pack();
-    }
-    else if (choice == "l")
-    {
-list_pack();
-    }
-    else
-    {
-        alert("Error", "Invalid Option selected. Please type create, extract, or list.");
-        main();
-    }
+    alert("Goodbye!", "Thank you for using NVGT Pack Tools.", false, MESSAGE_BOX_INFORMATION);
 }

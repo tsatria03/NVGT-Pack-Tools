@@ -16,22 +16,22 @@ void create_pack()
         if (filename == "")
 {
 alert("Error", "You may not create an empty pack!");
-main();
+return;
 }
         foldername = input_box("Pack Creator", "Enter the path containing files to pack");
-        if (foldername == "") main();
+        if (foldername == "") return;
         int answer = question("Pack Creator", "Would you like these files to be encrypted?");
         if (answer == 1)
         {
             encrypt = true;
             encryption_key = input_box("Pack Creator", "Enter the encryption key for this pack.");
-            if (encryption_key == "") main();
+            if (encryption_key == "") return;
             if (string_left(encryption_key, 6) == "file::")
             {
                 if (!f.open(string_trim_left(encryption_key, 6), "rb"))
                 {
                     alert("Error", "Failed to open key file.");
-                    main();
+                    return;
                 }
                 encryption_key = f.read();
                 f.close();
@@ -66,12 +66,12 @@ main();
     if (!directory_exists(foldername))
     {
         if (!silent) alert("Error", "Folder does not exist!");
-        main();
+        return;
     }
     if (!pfile.open(filename, PACK_OPEN_MODE_CREATE))
     {
         alert("Error", "Failed to create pack file!");
-        main();
+        return;
     }
     find_stuff(foldername, foldername);
     if (!silent)
@@ -93,7 +93,7 @@ for (uint i = 0; i < file_list.length(); i++)
     }
     pfile.close();
     if (!silent) alert("Success!", "Files were added successfully!");
-    main();
+    return;
 }
 void find_stuff(string base, string path)
 {

@@ -4,13 +4,13 @@ string filename=input_box("Simple pack lister", "Enter the path/name to a pack f
 if(filename=="")
 {
 alert("Error", "You may not list an empty pack!");
-main();
+return;
 }
 bool success=obj.open(filename);
 if(!success)
 {
 alert("error", "Either this file does not exist or it is not a valid pack file");
-main();
+return;
 }
 string final_list;
 string[] list=obj.list_files();

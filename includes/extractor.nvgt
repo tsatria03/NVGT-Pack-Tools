@@ -4,10 +4,10 @@ void extract_pack()
     if (filename == "")
     {
         alert("Error", "You may not extract an empty pack!");
-        main();
+        return;
     }
     decrypt_key = input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
-    if (get_last_error() == -12) main();
+    if (get_last_error() == -12) return;
     if (decrypt_key != "")
     {
         use_key = true;
@@ -16,7 +16,7 @@ void extract_pack()
             if (!temp.open(string_trim_left(decrypt_key, 6), "rb"))
             {
                 alert("Error", "Failed to open key file.");
-                main();
+                return;
             }
             decrypt_key = temp.read();
             temp.close();
@@ -37,17 +37,17 @@ void extract_pack()
         }
     }
     end = input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
-    if (get_last_error() == -12) main();
+    if (get_last_error() == -12) return;
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
         alert("Error", "Could not open the specified pack file.");
-        main();
+        return;
     }
     contents = pfile.list_files();
     if (contents.length() == 0)
     {
         alert("Error", "No files found in this pack.");
-        main();
+        return;
     }
     alert("Get Ready", contents.length() + " files are about to be extracted!");
     if (!directory_exists("packs"))
