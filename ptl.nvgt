@@ -32,7 +32,7 @@ int last_choice = 1;
             list_pack();
         else if (choice == 5)
             view_pack();
-        else if (choice == 6) // Exit
+        else if (choice == 6)
             running = false;
         else
             alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
