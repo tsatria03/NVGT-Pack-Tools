@@ -64,16 +64,6 @@ string file_decrypt(const string& encrypted_content, const string& encryption_ke
 {
 return string_decrypt(encrypted_content, encryption_key);
 }
-string generate_token(int token_length)
-{
-string token_sims="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-string final_token;
-for(uint i=0; i<token_length; i++)
-{
-final_token+=token_sims[random(0, token_sims.length()-1)];
-}
-return final_token;
-}
 string trim(const string&in str)
 {
 string result = str;

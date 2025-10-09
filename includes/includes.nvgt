@@ -5,6 +5,7 @@
 #include "sound_pool.nvgt"
 #include"audioutils.nvgt"
 #include"extrafuncts.nvgt"
+#include"token_gen.nvgt"
 
 bool use_key = false;
 bool strpack = false;
