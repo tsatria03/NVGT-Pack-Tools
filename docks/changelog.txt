@@ -1,7 +1,8 @@
 New in 1.0.
-Refactored the entire pack encription key generator. Instead of auto-generating a predefined key, you'll now be presented with several buttons on what type of characters the key should include, along with a prompt that asks how long the key should be.
+Made it so you can't generate a pack encryption key that is less than 10 characters in length.
+Refactored the entire pack encryption key generator. Instead of auto-generating a predefined key, you'll now be presented with several buttons on what type of characters the key should include, along with a prompt that asks how long the key should be.
 Made it so the app remembers the last button that was chosen after using a tool in the main interface.
-Added the ability to generate an encription key for a pack that you want to create. You can access this function in the main interface of the app.
+Added the ability to generate an encryption key for a pack that you want to create. You can access this function in the main interface of the app.
 Added the ability to view the information for a particular pack in the new pack viewer. You can access this function in the main interface of the app.
 Fixed a bug where trying to abort the entire app would cause one of the functions to execute itself without any user input received from the main interface.
 Made this app completely menu based. This toolset will no longer be prompt based moving forward.

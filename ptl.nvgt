@@ -215,7 +215,7 @@ void extract_pack()
 }
 void generate_pack_key()
 {
-    string[] options = {"`Letters only", "Letters + Numbers", "Letters + Symbols", "Letters + Numbers + Symbols", "Numbers only", "Numbers + Symbols", "Symbols only"};    
+    string[] options = {"`Letters only", "Letters and Numbers", "Letters and Symbols", "Letters, Numbers and Symbols", "Numbers only", "Numbers and Symbols", "Symbols only"};    
     int mode_choice = message_box("Pack Key Generator", "Choose what characters the encription key should include.", options, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
 int mode;
 if (mode_choice == 1)
@@ -235,7 +235,11 @@ else if (mode_choice == 7)
 else
     return;
     string length_str = input_box("Pack Key Generator", "Enter how long the encription key should be.", "10");
-    if (length_str == "") return;
+    if (length_str == "")
+{
+alert("Error", "Invalid key length entered!");
+return;
+}
     int length = string_to_number(length_str);
     if (length < 10)
     {
@@ -244,7 +248,7 @@ else
     }
     string key = generate_token(length, mode);
     clipboard_copy_text(key);
-    alert("Pack Key Generator", "The key has been copied to your clipboard!");
+    alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
 }
 void list_pack()
 {
