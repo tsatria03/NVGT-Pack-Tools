@@ -5,7 +5,7 @@ void main()
     while (running)
     {
         wait(5);
-int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVGT Pack Tools! Please select an option.", {"`Create a new pack", "`Extract an existing pack", "`List the contents  of a pack", "`View the info for a pack", "~Exit"}, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
+int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVGT Pack Tools! Please select an option.", {"`Create a new pack", "`Extract an existing pack", "Generate a pack encription key", "`List the contents  of a pack", "`View the info for a pack", "~Exit app"}, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
         if (choice == 1)
         {
             create_pack();
@@ -16,13 +16,17 @@ int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVG
         }
         else if (choice == 3)
         {
-            list_pack();
+            generate_pack_key();
         }
         else if (choice == 4)
         {
-            view_pack();
+            list_pack();
         }
         else if (choice == 5)
+        {
+            view_pack();
+        }
+        else if (choice == 6)
         {
             running = false;
         }
@@ -31,7 +35,7 @@ int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVG
             alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
         }
     }
-    alert("Goodbye", "Thanks for using NVGT Pack Tools! Exiting.", false, MESSAGE_BOX_INFORMATION);
+    alert("Goodbye", "Thanks for using NVGT Pack Tools!", false, MESSAGE_BOX_INFORMATION);
 }
 void create_pack()
 {
@@ -207,9 +211,16 @@ void extract_pack()
     pfile.close();
     alert("Success", "Extraction completed. " + contents.length() + " files have been extracted to " + base_dir);
 }
+void generate_pack_key()
+{
+string key=generate_token(random(133, 517));
+clipboard_copy_text(key);
+alert("keygen", "the key has been coppied to your clipboard!");
+return;
+}
 void list_pack()
 {
-string filename=input_box("Simple pack lister", "Enter the path/name to a pack file, such as sounds.dat");
+string filename=input_box("Pack lister", "Enter the path/name to a pack file, such as sounds.dat");
 if(filename=="")
 {
 alert("Error", "You may not list an empty pack!");
