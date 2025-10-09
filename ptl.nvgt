@@ -282,7 +282,7 @@ void list_pack()
     }
     slist.write(final_list);
     slist.close();
-    alert("Complete!", "The sounds list has been written to " + outname + ".");
+    alert("Complete!", "The pack list has been written to " + outname + ".");
 }
 void view_pack()
 {
