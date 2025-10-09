@@ -1,39 +1,42 @@
 #include "includes/includes.nvgt"
+    int last_choice = 1;
 void main()
 {
     bool running = true;
+int last_choice = 1;
     while (running)
     {
         wait(5);
-int choice = message_box("NVGT Pack Tools, version"+version+".", "Welcome to NVGT Pack Tools! Please select an option.", {"`Create a new pack", "`Extract an existing pack", "Generate a pack encription key", "`List the contents  of a pack", "`View the info for a pack", "~Exit app"}, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
+        string[] labels = {"Create a new pack", "Extract an existing pack", "Generate a pack encryption key", "List the contents of a pack", "View the info for a pack", "Exit app"};
+        string[] tools;
+        tools.resize(labels.length());
+        for (uint i = 0; i < labels.length(); i++)
+            tools[i] = labels[i];
+        int max_non_exit = int(labels.length()) - 1;
+        if (last_choice < 1 || last_choice > max_non_exit)
+            last_choice = 1;
+        tools[last_choice - 1] = "`" + tools[last_choice - 1];
+        tools[tools.length() - 1] = "~" + tools[tools.length() - 1];
+        int choice = message_box("NVGT Pack Tools, version " + version + ".", "Welcome to NVGT Pack Tools! Please select an option.", tools, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
+        if (choice >= 1 && choice <= int(tools.length()))
+        {
+            if (choice != int(tools.length()))
+                last_choice = choice;
+        }
         if (choice == 1)
-        {
             create_pack();
-        }
         else if (choice == 2)
-        {
             extract_pack();
-        }
         else if (choice == 3)
-        {
             generate_pack_key();
-        }
         else if (choice == 4)
-        {
             list_pack();
-        }
         else if (choice == 5)
-        {
             view_pack();
-        }
-        else if (choice == 6)
-        {
+        else if (choice == 6) // Exit
             running = false;
-        }
         else
-        {
             alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
-        }
     }
     alert("Goodbye", "Thanks for using NVGT Pack Tools!", false, MESSAGE_BOX_INFORMATION);
 }

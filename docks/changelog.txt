@@ -1,4 +1,5 @@
 New in 1.0.
+Made it so the app remembers the last button that was chosen after using a tool in the main interface.
 Added the ability to generate an encription key for a pack that you want to create. You can access this function in the main interface of the app.
 Added the ability to view the information for a particular pack in the new pack viewer. You can access this function in the main interface of the app.
 Fixed a bug where trying to abort the entire app would cause one of the functions to execute itself without any user input received from the main interface.
