@@ -252,30 +252,37 @@ return;
 }
 void list_pack()
 {
-string filename=input_box("Pack lister", "Enter the path/name to a pack file, such as sounds.dat");
-if(filename=="")
-{
-alert("Error", "You may not list an empty pack!");
-return;
-}
-bool success=obj.open(filename);
-if(!success)
-{
-alert("error", "Either this file does not exist or it is not a valid pack file");
-return;
-}
-string final_list;
-string[] list=obj.list_files();
-for(uint i=0; i<list.length(); i++)
-{
-final_list+=list[i]+"\r\n";
-}
-final_list+="total files: "+list.length()+"\r\n";
-file slist;
-slist.open("soundslist.txt", "w");
-slist.write(final_list);
-slist.close();
-alert("Complete! ", "The sounds list has been written to soundslist.txt.");
+    string filename = input_box("Pack Lister", "Enter the path/name to a pack file, such as sounds.dat");
+    if (filename == "")
+    {
+        alert("Error", "You may not list an empty pack!");
+        return;
+    }
+    bool success = obj.open(filename);
+    if (!success)
+    {
+        alert("Error", "Either this file does not exist or it is not a valid pack file.");
+        return;
+    }
+    string outname = input_box("Output Filename", "Enter the name of the file to write the list to. Leave blank to use soundslist.txt.");
+    if (outname == "")
+        outname = "soundslist.txt";
+    string final_list;
+    string[] list = obj.list_files();
+    for (uint i = 0; i < list.length(); i++)
+    {
+        final_list += list[i] + "\r\n";
+    }
+    final_list += "Total files: " + list.length() + "\r\n";
+    file slist;
+    if (!slist.open(outname, "w"))
+    {
+        alert("Error", "Unable to write to the specified file!");
+        return;
+    }
+    slist.write(final_list);
+    slist.close();
+    alert("Complete!", "The sounds list has been written to " + outname + ".");
 }
 void view_pack()
 {

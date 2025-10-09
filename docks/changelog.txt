@@ -1,4 +1,5 @@
 New in 1.0.
+Added the ability to enter a custom name for writing the contents of a pack to a spisific file.
 Made it so you can't generate a pack encryption key that is less than 10 characters in length.
 Refactored the entire pack encryption key generator. Instead of auto-generating a predefined key, you'll now be presented with several buttons on what type of characters the key should include, along with a prompt that asks how long the key should be.
 Made it so the app remembers the last button that was chosen after using a tool in the main interface.
