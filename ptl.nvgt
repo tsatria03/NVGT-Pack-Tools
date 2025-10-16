@@ -85,15 +85,35 @@ speak(menu_items[current]);
 else if (key_repeating(KEY_RETURN))
 {
 if (current == 0)
+{
+beep_percentage(50);
+wait(500);
 create_pack();
+}
 else if (current == 1)
+{
+beep_percentage(50);
+wait(500);
 extract_pack();
+}
 else if (current == 2)
+{
+beep_percentage(50);
+wait(500);
 generate_pack_key();
+}
 else if (current == 3)
+{
+beep_percentage(50);
+wait(500);
 list_pack();
+}
 else if (current == 4)
+{
+beep_percentage(50);
+wait(500);
 view_pack();
+}
 else if (current == 5)
 {
 beep_percentage(50);
@@ -362,6 +382,7 @@ beep_percentage(50);
         {
             if (current == 7)
             {
+beep_percentage(50);
                 return;
             }
             if (current == 0)
@@ -397,6 +418,7 @@ beep_percentage(50);
         }
         else if (key_repeating(KEY_ESCAPE))
         {
+beep_percentage(50);
             return;
         }
     }
