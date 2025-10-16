@@ -3,9 +3,11 @@
 
 #include "bgt_compat.nvgt"
 #include "sound_pool.nvgt"
+#include"speech.nvgt"
 #include"audioutils.nvgt"
 #include"extrafuncts.nvgt"
 #include"token_gen.nvgt"
+#include"virtual_dialogs.nvgt"
 
 bool use_key = false;
 bool strpack = false;
@@ -23,5 +25,6 @@ string version="1.0";
 file f, temp;
 pack pfile, obj;
 sound@ progress_sound;
+virtual_dialogs vd;
 
 typedef uint8 usmall; typedef int8 small;

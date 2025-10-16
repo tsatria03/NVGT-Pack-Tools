@@ -1,43 +1,121 @@
 #include "includes/includes.nvgt"
 void main()
 {
-    bool running = true;
-int last_choice = 1;
-    while (running)
-    {
-        wait(5);
-        string[] labels = {"Create a new pack", "Extract an existing pack", "Generate a pack encryption key", "List the contents of a pack", "View the info for a pack", "Exit app"};
-        string[] tools;
-        tools.resize(labels.length());
-        for (uint i = 0; i < labels.length(); i++)
-            tools[i] = labels[i];
-        int max_non_exit = int(labels.length()) - 1;
-        if (last_choice < 1 || last_choice > max_non_exit)
-            last_choice = 1;
-        tools[last_choice - 1] = "`" + tools[last_choice - 1];
-        tools[tools.length() - 1] = "~" + tools[tools.length() - 1];
-        int choice = message_box("NVGT Pack Tools, version " + version + ".", "Welcome to NVGT Pack Tools! Please select an option.", tools, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
-        if (choice >= 1 && choice <= int(tools.length()))
-        {
-            if (choice != int(tools.length()))
-                last_choice = choice;
-        }
-        if (choice == 1)
-            create_pack();
-        else if (choice == 2)
-            extract_pack();
-        else if (choice == 3)
-            generate_pack_key();
-        else if (choice == 4)
-            list_pack();
-        else if (choice == 5)
-            view_pack();
-        else if (choice == 6)
-            running = false;
-        else
-            alert("Error", "Unknown option selected!", false, MESSAGE_BOX_ERROR);
-    }
-    alert("Goodbye", "Thanks for using NVGT Pack Tools!", false, MESSAGE_BOX_INFORMATION);
+show_window("NVGT Pack Tools, version " + version + ".");
+wait(500);
+maintool();
+}
+void maintool()
+{
+string[] menu_items = {"Create a new pack", "Extract an existing pack", "Generate a pack encryption key", "List the contents of a pack", "View the info for a pack", "Exit"};
+int current = 0;
+bool running = true;
+beep_percentage(50);
+speak("NVGT Pack Tools. Use up and down arrows to navigate. Press enter to select, or escape to exit. "+menu_items[current]);
+while (running)
+{
+wait(5);
+if (key_repeating(KEY_C))
+{
+current=0;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+if (key_repeating(KEY_E))
+{
+current=1;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+if (key_repeating(KEY_G))
+{
+current=2;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+if (key_repeating(KEY_L))
+{
+current=3;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+if (key_repeating(KEY_V))
+{
+current=4;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+if (key_repeating(KEY_X))
+{
+current=5;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+if(key_repeating(KEY_TAB))
+{
+beep_percentage(50);
+speak("NVGT Pack Tools. Use up and down arrows to navigate. Press enter to select, or escape to exit.");
+}
+        if (key_repeating(KEY_HOME))
+{
+beep_percentage(0);
+current = 0;
+speak(menu_items[current]);
+}
+        if (key_repeating(KEY_END))
+{
+beep_percentage(100);
+current = 5;
+speak(menu_items[current]);
+}
+if (key_repeating(KEY_UP) || key_repeating(KEY_LEFT))
+{
+current--;
+if (current < 0) current = menu_items.length() - 1;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+else if (key_repeating(KEY_DOWN) || key_repeating(KEY_RIGHT))
+{
+current++;
+if (current >= menu_items.length()) current = 0;
+beep_percentage(50);
+speak(menu_items[current]);
+}
+else if (key_repeating(KEY_RETURN))
+{
+if (current == 0)
+create_pack();
+else if (current == 1)
+extract_pack();
+else if (current == 2)
+generate_pack_key();
+else if (current == 3)
+list_pack();
+else if (current == 4)
+view_pack();
+else if (current == 5)
+{
+beep_percentage(50);
+speak("Exiting.");
+wait(500);
+running = false;
+}
+if (running)
+{
+wait(500);
+beep_percentage(50);
+speak("NVGT Pack Tools. Use up and down arrows to navigate. Press enter to select, or escape to exit. "+menu_items[current]);
+}
+}
+else if (key_repeating(KEY_ESCAPE))
+{
+beep_percentage(50);
+speak("Exiting.");
+wait(500);
+running = false;
+}
+}
 }
 void create_pack()
 {
@@ -50,22 +128,23 @@ void create_pack()
         int use_saved = (silent ? 1 : question("File was found.", "Would you like to use the existing saved data?"));
         if (use_saved == 1)
             cont = false;
+wait(500);
     }
     if (cont)
     {
-        filename = input_box("Pack Creator", "Enter the name of the pack file to create");
+        filename = vd.input_box("Pack Creator", "Enter the name of the pack file to create");
         if (filename == "")
 {
 alert("Error", "You may not create an empty pack!");
 return;
 }
-        foldername = input_box("Pack Creator", "Enter the path containing files to pack");
+        foldername = vd.input_box("Pack Creator", "Enter the path containing files to pack");
         if (foldername == "") return;
         int answer = question("Pack Creator", "Would you like these files to be encrypted?");
         if (answer == 1)
         {
             encrypt = true;
-            encryption_key = input_box("Pack Creator", "Enter the encryption key for this pack.");
+            encryption_key = vd.input_box("Pack Creator", "Enter the encryption key for this pack.");
             if (encryption_key == "") return;
             if (string_left(encryption_key, 6) == "file::")
             {
@@ -138,13 +217,13 @@ for (uint i = 0; i < file_list.length(); i++)
 }
 void extract_pack()
 {
-    filename = input_box("Pack Extractor", "Enter the name of the pack file to extract");
+    filename = vd.input_box("Pack Extractor", "Enter the name of the pack file to extract");
     if (filename == "")
     {
         alert("Error", "You may not extract an empty pack!");
         return;
     }
-    decrypt_key = input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
+    decrypt_key = vd.input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
     if (get_last_error() == -12) return;
     if (decrypt_key != "")
     {
@@ -174,7 +253,7 @@ void extract_pack()
             decrypt_key = hex_to_string(string_trim_left(decrypt_key, 10));
         }
     }
-    end = input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
+    end = vd.input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
     if (get_last_error() == -12) return;
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
@@ -215,44 +294,116 @@ void extract_pack()
 }
 void generate_pack_key()
 {
-    string[] options = {"`Letters only", "Letters and Numbers", "Letters and Symbols", "Letters, Numbers and Symbols", "Numbers only", "Numbers and Symbols", "Symbols only"};    
-    int mode_choice = message_box("Pack Key Generator", "Choose what characters the encription key should include.", options, MESSAGE_BOX_INFORMATION | MESSAGE_BOX_BUTTONS_LEFT_TO_RIGHT);
-int mode;
-if (mode_choice == 1)
-    mode = token_gen_flag_characters;
-else if (mode_choice == 2)
-    mode = token_gen_flag_characters_numbers;
-else if (mode_choice == 3)
-    mode = token_gen_flag_characters_symbols;
-else if (mode_choice == 4)
-    mode = token_gen_flag_all;
-else if (mode_choice == 5)
-    mode = token_gen_flag_numbers;
-else if (mode_choice == 6)
-    mode = token_gen_flag_numbers_symbols;
-else if (mode_choice == 7)
-    mode = token_gen_flag_symbols;
-else
-    return;
-    string length_str = input_box("Pack Key Generator", "Enter how long the encription key should be.", "10");
-    if (length_str == "")
-{
-alert("Error", "Invalid key length entered!");
-return;
-}
-    int length = string_to_number(length_str);
-    if (length < 10)
+    string[] options = {"Letters only", "Letters and Numbers", "Letters and Symbols", "Letters, Numbers and Symbols", "Numbers only", "Numbers and Symbols", "Symbols only", "Go back."};
+    int current = 0;
+    bool running = true;
+    int mode = token_gen_flag_characters;
+beep_percentage(50);
+    speak("Pack key generator menu. Choose a character set you'd like to use. " + options[current]);
+    while (running)
     {
-        alert("Error", "Invalid key length entered!");
-        return;
+        wait(5);
+        if (key_repeating(KEY_L))
+{
+current = 0;
+beep_percentage(50);
+speak(options[current]);
+}
+        if (key_repeating(KEY_N))
+{
+current = 4;
+beep_percentage(50);
+speak(options[current]);
+}
+        if (key_repeating(KEY_S))
+{
+current = 6;
+beep_percentage(50);
+speak(options[current]);
+}
+        if (key_repeating(KEY_G))
+{
+current = 7;
+beep_percentage(50);
+speak(options[current]);
+}
+if(key_repeating(KEY_TAB))
+{
+beep_percentage(50);
+speak("Pack key generator menu. Choose a character set you'd like to use.");
+}
+        if (key_repeating(KEY_HOME))
+{
+current = 0;
+beep_percentage(0);
+speak(options[current]);
+}
+        if (key_repeating(KEY_END))
+{
+current = 7;
+beep_percentage(100);
+speak(options[current]);
+}
+        if (key_repeating(KEY_UP) || key_repeating(KEY_LEFT))
+        {
+            current--;
+            if (current < 0) current = options.length() - 1;
+beep_percentage(50);
+            speak(options[current]);
+        }
+        else if (key_repeating(KEY_DOWN) || key_repeating(KEY_RIGHT))
+        {
+            current++;
+            if (current >= options.length()) current = 0;
+beep_percentage(50);
+            speak(options[current]);
+        }
+        else if (key_repeating(KEY_RETURN))
+        {
+            if (current == 7)
+            {
+                return;
+            }
+            if (current == 0)
+                mode = token_gen_flag_characters;
+            else if (current == 1)
+                mode = token_gen_flag_characters_numbers;
+            else if (current == 2)
+                mode = token_gen_flag_characters_symbols;
+            else if (current == 3)
+                mode = token_gen_flag_all;
+            else if (current == 4)
+                mode = token_gen_flag_numbers;
+            else if (current == 5)
+                mode = token_gen_flag_numbers_symbols;
+            else if (current == 6)
+                mode = token_gen_flag_symbols;
+            string length_str = vd.input_box("Pack Key Generator", "Enter the encryption key length.", "");
+            if (length_str == "")
+            {
+                alert("Error", "Invalid key length entered!");
+                return;
+            }
+            int length = string_to_number(length_str);
+            if (length < 10)
+            {
+                alert("Error", "Invalid key length entered!");
+                return;
+            }
+            string key = generate_token(length, mode);
+            clipboard_copy_text(key);
+            alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
+            return;
+        }
+        else if (key_repeating(KEY_ESCAPE))
+        {
+            return;
+        }
     }
-    string key = generate_token(length, mode);
-    clipboard_copy_text(key);
-    alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
 }
 void list_pack()
 {
-    string filename = input_box("Pack Lister", "Enter the path/name to a pack file, such as sounds.dat");
+    string filename = vd.input_box("Pack Lister", "Enter the path/name to a pack file, such as sounds.dat");
     if (filename == "")
     {
         alert("Error", "You may not list an empty pack!");
@@ -264,7 +415,7 @@ void list_pack()
         alert("Error", "Either this file does not exist or it is not a valid pack file.");
         return;
     }
-    string outname = input_box("Output Filename", "Enter the name of the file to write the list to. Leave blank to use soundslist.txt.");
+    string outname = vd.input_box("Output Filename", "Enter the name of the file to write the list to. Leave blank to use soundslist.txt.");
     if (outname == "")
         outname = "soundslist.txt";
     string final_list;
@@ -286,7 +437,7 @@ void list_pack()
 }
 void view_pack()
 {
-    string filename = input_box("Pack Viewer", "Enter the name of the pack file to view information from.");
+    string filename = vd.input_box("Pack Viewer", "Enter the name of the pack file to view information from.");
     if (filename == "")
     {
         alert("Error", "You may not view an empty pack!");
