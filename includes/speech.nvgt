@@ -1,0 +1,53 @@
+/* speech.nvgt - very high level text-to-speech output and configuration routines
+ *
+ * NVGT - NonVisual Gaming Toolkit
+ * Copyright (c) 2022-2024 Sam Tupy
+ * https://nvgt.gg
+ * This software is provided "as-is", without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+ * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+ * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+*/
+
+tts_voice tts;
+string speechbuff;
+bool use_sr = true;
+string voicename = "SR";
+bool tts_default_interrupt = true;
+bool speak(string text, bool interrupt = tts_default_interrupt, bool translate_text = true, bool braille = true)
+{
+	speechbuff = text;
+	if (text.length() > 10000) {
+		string tmp = text;
+		while (tmp.length() > 0) {
+			uint pos = 4096;
+			while (pos > 2048 && pos < tmp.length() && tmp[pos] != " ") pos--;
+			raw_speak(tmp.substr(0, pos), interrupt && tmp.length() == text.length());
+			tmp = tmp.substr(pos);
+		}
+	} else {
+		raw_speak(text, interrupt);
+	}
+	return true;
+}
+void raw_speak(string text, bool interrupt)
+{
+	if (interrupt && tts.speaking)
+		tts.stop();
+	int voice = tts.voice;
+	int rate = tts.rate;
+	int volume = tts.volume;
+	if (voice > -1) tts.set_voice(voice);
+	tts.set_rate(rate);
+	tts.set_volume(volume);
+	if (!use_sr || !screen_reader_has_speech())
+		tts.speak(text, interrupt);
+	else
+		screen_reader_speak(text, interrupt);
+}
+void stop_speech()
+{
+	screen_reader_silence();
+	tts.stop();
+}

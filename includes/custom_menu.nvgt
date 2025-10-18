@@ -95,7 +95,7 @@ void find_first_letter_item()
 }
 void find_searched_item()
 {
-    string query = vd.input_box("Find an item", "Enter a keyword to search for:", last_search_query);
+    string query = input_box("Find an item", "Enter a keyword to search for:", last_search_query);
     if (query == "" || get_last_error() == -12)
     {
         speak("Cancelled.");
@@ -190,7 +190,7 @@ if (enable_first_letter_navigation)
 {
 find_first_letter_item();
 }
-if(key_pressed(KEY_F2))
+if(key_pressed(KEY_F3))
 {
 find_searched_item();
 }
@@ -304,4 +304,20 @@ find_searched_item();
         }
         return -1;
     }
+}
+void create_menu(menu@ m=m)
+{
+    m.clear_all_items();
+    m.enable_up_and_down = true;
+    m.enable_left_and_right = true;
+    m.enable_home_and_end = true;
+     m.enable_first_letter_navigation=true;
+    m.wrap_navigation = true;
+    m.speak_position = false;
+    m.click_sound = "";
+    m.close_sound = "";
+    m.enter_sound = "";
+    m.edge_sound  = "";
+    m.open_sound  = "";
+    m.wrap_sound  = "";
 }

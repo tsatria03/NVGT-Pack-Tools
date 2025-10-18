@@ -40,5 +40,4 @@ void maintool()
         wait(500);
         exit();
     }
-    maintool();
 }

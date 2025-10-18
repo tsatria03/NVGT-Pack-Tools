@@ -13,25 +13,27 @@ wait(500);
     }
     if (cont)
     {
-        filename = vd.input_box("Pack Creator", "Enter the name of the pack file to create");
+        filename = input_box("Pack Creator", "Enter the name of the pack file to create");
         if (filename == "")
 {
-vd.alert("Error", "You may not create an empty pack!");
+alert("Error", "You may not create an empty pack!");
+wait(500);
 maintool();
 }
-        foldername = vd.input_box("Pack Creator", "Enter the path containing files to pack");
+        foldername = input_box("Pack Creator", "Enter the path containing files to pack");
         if (foldername == "") maintool();
         int answer = question("Pack Creator", "Would you like these files to be encrypted?");
         if (answer == 1)
         {
             encrypt = true;
-            encryption_key = vd.input_box("Pack Creator", "Enter the encryption key for this pack.");
+            encryption_key = input_box("Pack Creator", "Enter the encryption key for this pack.");
             if (encryption_key == "") maintool();
             if (string_left(encryption_key, 6) == "file::")
             {
                 if (!f.open(string_trim_left(encryption_key, 6), "rb"))
                 {
-                    vd.alert("Error", "Failed to open key file.");
+                    alert("Error", "Failed to open key file.");
+wait(500);
                     maintool();
                 }
                 encryption_key = f.read();
@@ -66,17 +68,19 @@ maintool();
     }
     if (!directory_exists(foldername))
     {
-        if (!silent) vd.alert("Error", "Folder does not exist!");
+        if (!silent) alert("Error", "Folder does not exist!");
+wait(500);
         maintool();
     }
     if (!pfile.open(filename, PACK_OPEN_MODE_CREATE))
     {
-        vd.alert("Error", "Failed to create pack file!");
+        alert("Error", "Failed to create pack file!");
+wait(500);
         maintool();
     }
     find_stuff(foldername, foldername);
     if (!silent)
-        vd.alert("Pack Creator", "There are " + file_list.length() + " files in the pack. Press OK to start packing!");
+        alert("Pack Creator", "There are " + file_list.length() + " files in the pack. Press OK to start packing!");
     show_window("Packing...");
     wait(5);
     int percent = -1;
@@ -93,18 +97,20 @@ for (uint i = 0; i < file_list.length(); i++)
         pfile.add_file(file_list[i], relative);
     }
     pfile.close();
-    if (!silent) vd.alert("Success!", "Files were added successfully!");
+    if (!silent) alert("Success!", "Files were added successfully!");
+wait(500);
     maintool();
 }
 void extract_pack()
 {
-    filename = vd.input_box("Pack Extractor", "Enter the name of the pack file to extract");
+    filename = input_box("Pack Extractor", "Enter the name of the pack file to extract");
     if (filename == "")
     {
-        vd.alert("Error", "You may not extract an empty pack!");
+        alert("Error", "You may not extract an empty pack!");
+wait(500);
         maintool();
     }
-    decrypt_key = vd.input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
+    decrypt_key = input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
     if (get_last_error() == -12) maintool();
     if (decrypt_key != "")
     {
@@ -113,7 +119,8 @@ void extract_pack()
         {
             if (!temp.open(string_trim_left(decrypt_key, 6), "rb"))
             {
-                vd.alert("Error", "Failed to open key file.");
+                alert("Error", "Failed to open key file.");
+wait(500);
                 maintool();
             }
             decrypt_key = temp.read();
@@ -134,20 +141,22 @@ void extract_pack()
             decrypt_key = hex_to_string(string_trim_left(decrypt_key, 10));
         }
     }
-    end = vd.input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
+    end = input_box("Pack Extractor", "Enter anything you want added to the end of the filenames, such as .ogg or .wav.");
     if (get_last_error() == -12) maintool();
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
-        vd.alert("Error", "Could not open the specified pack file.");
+        alert("Error", "Could not open the specified pack file.");
+wait(500);
         maintool();
     }
     contents = pfile.list_files();
     if (contents.length() == 0)
     {
-        vd.alert("Error", "No files found in this pack.");
+        alert("Error", "No files found in this pack.");
+wait(500);
         maintool();
     }
-    vd.alert("Get Ready", contents.length() + " files are about to be extracted!");
+    alert("Get Ready", contents.length() + " files are about to be extracted!");
     if (!directory_exists("packs"))
         directory_create("packs");
     string base_dir = "packs/" + filename;
@@ -171,7 +180,9 @@ void extract_pack()
         extract_file(pfile, relative_path, output_path);
     }
     pfile.close();
-    vd.alert("Success", "Extraction completed. " + contents.length() + " files have been extracted to " + base_dir);
+    alert("Success", "Extraction completed. " + contents.length() + " files have been extracted to " + base_dir);
+wait(500);
+    maintool();
 }
 void generate_pack_key()
 {
@@ -197,7 +208,6 @@ void generate_pack_key()
     if (choice == 0 || genem == "back")
     {
         maintool();
-        return;
     }
     int mode = token_gen_flag_characters;
     if (genem == "let")
@@ -214,40 +224,43 @@ void generate_pack_key()
         mode = token_gen_flag_numbers_symbols;
     else if (genem == "sym")
         mode = token_gen_flag_symbols;
-    string length_str = vd.input_box("Pack Key Generator", "Enter the encryption key length.", "10");
+    string length_str = input_box("Pack Key Generator", "Enter the encryption key length.", "10");
     if (length_str == "")
     {
-        vd.alert("Error", "Invalid key length entered!");
-        maintool();
-        return;
+        alert("Error", "Invalid key length entered!");
+wait(500);
+        generate_pack_key();
     }
     int length = string_to_number(length_str);
     if (length < 10)
     {
-        vd.alert("Error", "Invalid key length entered!");
-        maintool();
-        return;
+        alert("Error", "Invalid key length entered!");
+wait(500);
+        generate_pack_key();
     }
     string key = generate_token(length, mode);
     clipboard_copy_text(key);
-    vd.alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
-    maintool();
+    alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
+wait(500);
+generate_pack_key();
 }
 void list_pack()
 {
-    string filename = vd.input_box("Pack Lister", "Enter the path/name to a pack file, such as sounds.dat");
+    string filename = input_box("Pack Lister", "Enter the path/name to a pack file, such as sounds.dat");
     if (filename == "")
     {
-        vd.alert("Error", "You may not list an empty pack!");
+        alert("Error", "You may not list an empty pack!");
+wait(500);
         maintool();
     }
     bool success = obj.open(filename);
     if (!success)
     {
-        vd.alert("Error", "Either this file does not exist or it is not a valid pack file.");
+        alert("Error", "Either this file does not exist or it is not a valid pack file.");
+wait(500);
         maintool();
     }
-    string outname = vd.input_box("Output Filename", "Enter the name of the file to write the list to. Leave blank to use soundslist.txt.");
+    string outname = input_box("Output Filename", "Enter the name of the file to write the list to. Leave blank to use soundslist.txt.");
     if (outname == "")
         outname = "soundslist.txt";
     string final_list;
@@ -260,31 +273,37 @@ void list_pack()
     file slist;
     if (!slist.open(outname, "w"))
     {
-        vd.alert("Error", "Unable to write to the specified file!");
+        alert("Error", "Unable to write to the specified file!");
+wait(500);
         maintool();
     }
     slist.write(final_list);
     slist.close();
-    vd.alert("Complete!", "The pack list has been written to " + outname + ".");
+    alert("Complete!", "The pack list has been written to " + outname + ".");
+wait(500);
+    maintool();
 }
 void view_pack()
 {
-    string filename = vd.input_box("Pack Viewer", "Enter the name of the pack file to view information from.");
+    string filename = input_box("Pack Viewer", "Enter the name of the pack file to view information from.");
     if (filename == "")
     {
-        vd.alert("Error", "You may not view an empty pack!");
+        alert("Error", "You may not view an empty pack!");
+wait(500);
         maintool();
     }
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
-        vd.alert("Error", "Could not open this pack file.");
+        alert("Error", "Could not open this pack file.");
+wait(500);
         maintool();
     }
     string[] files = pfile.list_files();
     if (files.length() == 0)
     {
-        vd.alert("Error", "No files found in this pack.");
+        alert("Error", "No files found in this pack.");
         pfile.close();
+wait(500);
         maintool();
     }
     uint64 total_size = 0;
