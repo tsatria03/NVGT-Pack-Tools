@@ -7,6 +7,7 @@
 #include"audioutils.nvgt"
 #include"extrafuncts.nvgt"
 #include"packers.nvgt"
+#include"setupmenu.nvgt"
 #include"simple_menu.nvgt"
 #include"token_gen.nvgt"
 #include"virtual_dialogs.nvgt"
@@ -23,6 +24,7 @@ string foldername;
 string[] file_list;
 string decrypt_key;
 string end;
+string last_menu_id = "";
 string version="1.0";
 file f, temp;
 pack pfile, obj;

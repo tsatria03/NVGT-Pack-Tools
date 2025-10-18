@@ -7,28 +7,38 @@ maintool();
 }
 void maintool()
 {
-    create_menu(m);
-    m.add_item("Create a new pack");
-    m.add_item("Extract an existing pack");
-    m.add_item("Generate a pack encryption key");
-    m.add_item("List the contents of a pack");
-    m.add_item("View the info for a pack");
-    m.add_item("Exit app");
-        int choice = m.run("NVGT Pack Tools. Use arrow keys to navigate, enter to select, or escape to exit.");
-        if (choice == 1)
-            create_pack();
-        else if (choice == 2)
-            extract_pack();
-        else if (choice == 3)
-            generate_pack_key();
-        else if (choice == 4)
-            list_pack();
-        else if (choice == 5)
-            view_pack();
-        else if (choice == 6 || choice == 0)
-        {
-            speak("Exiting");
-            wait(500);
-exit();
-        }
+    create_menu();
+    m.add_item("Create a new pack", "crp");
+    m.add_item("Extract an existing pack", "exp");
+    m.add_item("Generate a pack encryption key", "gpk");
+    m.add_item("List the contents of a pack", "lcp");
+    m.add_item("View the info for a pack", "vnp");
+    m.add_item("Exit", "ex");
+    int start_pos = 0;
+    if (last_menu_id != "")
+    {
+        int found = m.find_item_by_id(last_menu_id);
+        if (found != -1)
+            start_pos = found;
     }
+    int choice = m.run("NVGT Pack Tools. Use arrow keys to navigate, enter to select, or escape to exit.", start_pos);
+    string main = m.get_item_id(choice);
+    last_menu_id = main;
+    if (main == "crp")
+        create_pack();
+    else if (main == "exp")
+        extract_pack();
+    else if (main == "gpk")
+        generate_pack_key();
+    else if (main == "lcp")
+        list_pack();
+    else if (main == "vnp")
+        view_pack();
+    else if (main == "ex" || choice == 0)
+    {
+        speak("Exiting");
+        wait(500);
+        exit();
+    }
+    maintool();
+}

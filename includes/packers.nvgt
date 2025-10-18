@@ -16,7 +16,7 @@ wait(500);
         filename = vd.input_box("Pack Creator", "Enter the name of the pack file to create");
         if (filename == "")
 {
-alert("Error", "You may not create an empty pack!");
+vd.alert("Error", "You may not create an empty pack!");
 maintool();
 }
         foldername = vd.input_box("Pack Creator", "Enter the path containing files to pack");
@@ -31,7 +31,7 @@ maintool();
             {
                 if (!f.open(string_trim_left(encryption_key, 6), "rb"))
                 {
-                    alert("Error", "Failed to open key file.");
+                    vd.alert("Error", "Failed to open key file.");
                     maintool();
                 }
                 encryption_key = f.read();
@@ -66,17 +66,17 @@ maintool();
     }
     if (!directory_exists(foldername))
     {
-        if (!silent) alert("Error", "Folder does not exist!");
+        if (!silent) vd.alert("Error", "Folder does not exist!");
         maintool();
     }
     if (!pfile.open(filename, PACK_OPEN_MODE_CREATE))
     {
-        alert("Error", "Failed to create pack file!");
+        vd.alert("Error", "Failed to create pack file!");
         maintool();
     }
     find_stuff(foldername, foldername);
     if (!silent)
-        alert("Pack Creator", "There are " + file_list.length() + " files in the pack. Press OK to start packing!");
+        vd.alert("Pack Creator", "There are " + file_list.length() + " files in the pack. Press OK to start packing!");
     show_window("Packing...");
     wait(5);
     int percent = -1;
@@ -93,7 +93,7 @@ for (uint i = 0; i < file_list.length(); i++)
         pfile.add_file(file_list[i], relative);
     }
     pfile.close();
-    if (!silent) alert("Success!", "Files were added successfully!");
+    if (!silent) vd.alert("Success!", "Files were added successfully!");
     maintool();
 }
 void extract_pack()
@@ -101,7 +101,7 @@ void extract_pack()
     filename = vd.input_box("Pack Extractor", "Enter the name of the pack file to extract");
     if (filename == "")
     {
-        alert("Error", "You may not extract an empty pack!");
+        vd.alert("Error", "You may not extract an empty pack!");
         maintool();
     }
     decrypt_key = vd.input_box("Pack Extractor", "Enter the decryption key for this pack. Leave blank for no decryption key.");
@@ -113,7 +113,7 @@ void extract_pack()
         {
             if (!temp.open(string_trim_left(decrypt_key, 6), "rb"))
             {
-                alert("Error", "Failed to open key file.");
+                vd.alert("Error", "Failed to open key file.");
                 maintool();
             }
             decrypt_key = temp.read();
@@ -138,16 +138,16 @@ void extract_pack()
     if (get_last_error() == -12) maintool();
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
-        alert("Error", "Could not open the specified pack file.");
+        vd.alert("Error", "Could not open the specified pack file.");
         maintool();
     }
     contents = pfile.list_files();
     if (contents.length() == 0)
     {
-        alert("Error", "No files found in this pack.");
+        vd.alert("Error", "No files found in this pack.");
         maintool();
     }
-    alert("Get Ready", contents.length() + " files are about to be extracted!");
+    vd.alert("Get Ready", contents.length() + " files are about to be extracted!");
     if (!directory_exists("packs"))
         directory_create("packs");
     string base_dir = "packs/" + filename;
@@ -171,54 +171,66 @@ void extract_pack()
         extract_file(pfile, relative_path, output_path);
     }
     pfile.close();
-    alert("Success", "Extraction completed. " + contents.length() + " files have been extracted to " + base_dir);
+    vd.alert("Success", "Extraction completed. " + contents.length() + " files have been extracted to " + base_dir);
 }
 void generate_pack_key()
 {
-    create_menu(m);
-    m.add_item("Letters only");
-    m.add_item("Letters and Numbers");
-    m.add_item("Letters and Symbols");
-    m.add_item("Letters, Numbers and Symbols");
-    m.add_item("Numbers only");
-    m.add_item("Numbers and Symbols");
-    m.add_item("Symbols only");
-    m.add_item("Go back");
-    int choice = m.run("Pack key generator menu. Choose a character set you'd like to use.");
-    if (choice == 0 || choice == 8) // Escape or "Go back"
+    create_menu();
+    m.add_item("Letters only", "let");
+    m.add_item("Letters and Numbers", "letnum");
+    m.add_item("Letters and Symbols", "letsym");
+    m.add_item("Letters, Numbers and Symbols", "all");
+    m.add_item("Numbers only", "num");
+    m.add_item("Numbers and Symbols", "numsym");
+    m.add_item("Symbols only", "sym");
+    m.add_item("Go back", "back");
+    int start_pos = 0;
+    if (last_menu_id != "")
+    {
+        int found = m.find_item_by_id(last_menu_id);
+        if (found != -1)
+            start_pos = found;
+    }
+    int choice = m.run("Pack key generator menu. Choose a character set you'd like to use.", start_pos);
+    string genem = m.get_item_id(choice);
+    last_menu_id = genem;
+    if (choice == 0 || genem == "back")
     {
         maintool();
+        return;
     }
     int mode = token_gen_flag_characters;
-    if (choice == 1)
+    if (genem == "let")
         mode = token_gen_flag_characters;
-    else if (choice == 2)
+    else if (genem == "letnum")
         mode = token_gen_flag_characters_numbers;
-    else if (choice == 3)
+    else if (genem == "letsym")
         mode = token_gen_flag_characters_symbols;
-    else if (choice == 4)
+    else if (genem == "all")
         mode = token_gen_flag_all;
-    else if (choice == 5)
+    else if (genem == "num")
         mode = token_gen_flag_numbers;
-    else if (choice == 6)
+    else if (genem == "numsym")
         mode = token_gen_flag_numbers_symbols;
-    else if (choice == 7)
+    else if (genem == "sym")
         mode = token_gen_flag_symbols;
     string length_str = vd.input_box("Pack Key Generator", "Enter the encryption key length.", "10");
     if (length_str == "")
     {
-        alert("Error", "Invalid key length entered!");
+        vd.alert("Error", "Invalid key length entered!");
         maintool();
+        return;
     }
     int length = string_to_number(length_str);
     if (length < 10)
     {
-        alert("Error", "Invalid key length entered!");
+        vd.alert("Error", "Invalid key length entered!");
         maintool();
+        return;
     }
     string key = generate_token(length, mode);
     clipboard_copy_text(key);
-    alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
+    vd.alert("Pack Key Generator", "The key has been generated and copied to your clipboard!");
     maintool();
 }
 void list_pack()
@@ -226,13 +238,13 @@ void list_pack()
     string filename = vd.input_box("Pack Lister", "Enter the path/name to a pack file, such as sounds.dat");
     if (filename == "")
     {
-        alert("Error", "You may not list an empty pack!");
+        vd.alert("Error", "You may not list an empty pack!");
         maintool();
     }
     bool success = obj.open(filename);
     if (!success)
     {
-        alert("Error", "Either this file does not exist or it is not a valid pack file.");
+        vd.alert("Error", "Either this file does not exist or it is not a valid pack file.");
         maintool();
     }
     string outname = vd.input_box("Output Filename", "Enter the name of the file to write the list to. Leave blank to use soundslist.txt.");
@@ -248,30 +260,30 @@ void list_pack()
     file slist;
     if (!slist.open(outname, "w"))
     {
-        alert("Error", "Unable to write to the specified file!");
+        vd.alert("Error", "Unable to write to the specified file!");
         maintool();
     }
     slist.write(final_list);
     slist.close();
-    alert("Complete!", "The pack list has been written to " + outname + ".");
+    vd.alert("Complete!", "The pack list has been written to " + outname + ".");
 }
 void view_pack()
 {
     string filename = vd.input_box("Pack Viewer", "Enter the name of the pack file to view information from.");
     if (filename == "")
     {
-        alert("Error", "You may not view an empty pack!");
+        vd.alert("Error", "You may not view an empty pack!");
         maintool();
     }
     if (!pfile.open(filename, PACK_OPEN_MODE_READ))
     {
-        alert("Error", "Could not open this pack file.");
+        vd.alert("Error", "Could not open this pack file.");
         maintool();
     }
     string[] files = pfile.list_files();
     if (files.length() == 0)
     {
-        alert("Error", "No files found in this pack.");
+        vd.alert("Error", "No files found in this pack.");
         pfile.close();
         maintool();
     }

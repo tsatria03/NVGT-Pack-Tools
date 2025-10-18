@@ -1,4 +1,5 @@
 New in 1.0.
+Added the ability to navigate to the first letter of any item in a menu. You can also press F2 in any menu to launch the find dialog for searching for a spisific item that you want to go to.
 Replaced the old array-based menu system with a newer blocking style menu system.
 Added back virtual dialogs to reveal input prompts.
 Added some beeping indicators to the main interface and the pack key generation menu.
