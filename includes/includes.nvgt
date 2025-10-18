@@ -6,6 +6,8 @@
 #include"speech.nvgt"
 #include"audioutils.nvgt"
 #include"extrafuncts.nvgt"
+#include"packers.nvgt"
+#include"simple_menu.nvgt"
 #include"token_gen.nvgt"
 #include"virtual_dialogs.nvgt"
 
@@ -25,6 +27,8 @@ string version="1.0";
 file f, temp;
 pack pfile, obj;
 sound@ progress_sound;
+menu m;
+sound_pool spool;
 virtual_dialogs vd;
 
 typedef uint8 usmall; typedef int8 small;

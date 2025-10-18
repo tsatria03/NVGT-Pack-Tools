@@ -1,0 +1,223 @@
+class menu_item 
+{
+    string name;
+    menu_item(string item_name)
+    {
+        name = item_name;
+    }
+}
+class menu
+{
+    menu_item@[] items;
+    bool enable_up_and_down = true;
+    bool enable_left_and_right = true;
+    bool enable_home_and_end = true;
+    bool wrap_navigation = true;
+    bool speak_position = true;
+    string click_sound;
+    string close_sound;
+    string enter_sound;
+    string edge_sound;
+    string open_sound;
+    string wrap_sound;
+    int current_item = 0;
+    void play_click_sound()
+{
+if (click_sound != "") spool.play_stationary(click_sound, false);
+else
+beep_percentage(50);
+}
+    void play_close_sound()
+{
+if (close_sound != "") spool.play_stationary(close_sound, false);
+else
+beep_percentage(50);
+}
+    void play_enter_sound()
+{
+if (enter_sound != "") spool.play_stationary(enter_sound, false);
+else
+beep_percentage(50);
+}
+    void play_edge_sound() 
+{
+if (edge_sound != "") spool.play_stationary(edge_sound, false);
+else
+beep_percentage(50);
+}
+    void play_open_sound() 
+{
+if (open_sound != "") spool.play_stationary(open_sound, false);
+else
+beep_percentage(50);
+}
+    void play_wrap_sound() 
+{
+if (wrap_sound != "") spool.play_stationary(wrap_sound, false);
+else
+beep_percentage(50);
+}
+    void clear_all_items()
+    {
+        items.resize(0);
+    }
+    int add_item(string name)
+    {
+        items.insert_last(menu_item(name));
+        return items.length();
+    }
+int run(string title, int start_position = 0, bool start_focused=false)
+{
+    if (items.length() == 0)
+    {
+        speak("No menu items available.");
+        return -1;
+    }
+    if (start_position >= 0 && start_position < int(items.length()))
+        current_item = start_position;
+    else
+        current_item = 0;
+    if (title != "")
+        speak(title);
+    play_open_sound();
+bool has_focus = start_focused;
+    if (has_focus && start_position >= 0 && start_position < int(items.length()))
+        speak(get_item_description(current_item));
+    while (true)
+    {
+        wait(5);
+        if (key_repeating(KEY_TAB))
+        {
+            if (title != "") speak(title);
+        }
+        else if ((key_repeating(KEY_UP) || key_repeating(KEY_LEFT)) && enable_up_and_down)
+        {
+            if (!has_focus)
+            {
+                has_focus = true;
+play_click_sound();
+                speak(get_item_description(current_item));
+                continue;
+            }
+            int prev = current_item;
+            if (wrap_navigation)
+            {
+                current_item = (current_item - 1 + items.length()) % items.length();
+                if (current_item == int(items.length()) - 1 && prev == 0)
+                    play_wrap_sound();
+                else
+                    play_click_sound();
+            }
+            else if (current_item > 0)
+            {
+                current_item--;
+                play_click_sound();
+            }
+            else
+                play_edge_sound();
+            speak(get_item_description(current_item));
+        }
+        else if ((key_repeating(KEY_DOWN) || key_repeating(KEY_RIGHT)) && enable_up_and_down)
+        {
+            if (!has_focus)
+            {
+                has_focus = true;
+play_click_sound();
+                speak(get_item_description(current_item));
+                continue;
+            }
+            int prev = current_item;
+            if (wrap_navigation)
+            {
+                current_item = (current_item + 1) % items.length();
+                if (current_item == 0 && prev == int(items.length()) - 1)
+                    play_wrap_sound();
+                else
+                    play_click_sound();
+            }
+            else if (current_item < int(items.length()) - 1)
+            {
+                current_item++;
+                play_click_sound();
+            }
+            else
+                play_edge_sound();
+            speak(get_item_description(current_item));
+        }
+        else if (key_repeating(KEY_HOME) && enable_home_and_end)
+        {
+            if (!has_focus)
+            {
+                has_focus = true;
+play_click_sound();
+                speak(get_item_description(current_item));
+                continue;
+            }
+            if (current_item != 0)
+            {
+                current_item = 0;
+                play_click_sound();
+                speak(get_item_description(current_item));
+            }
+            else
+                play_edge_sound();
+        }
+        else if (key_repeating(KEY_END) && enable_home_and_end)
+        {
+            if (!has_focus)
+            {
+                has_focus = true;
+play_click_sound();
+                speak(get_item_description(current_item));
+                continue;
+            }
+            if (current_item != int(items.length()) - 1)
+            {
+                current_item = items.length() - 1;
+                play_click_sound();
+                speak(get_item_description(current_item));
+            }
+            else
+                play_edge_sound();
+        }
+        else if (key_pressed(KEY_ESCAPE))
+        {
+            play_close_sound();
+            speak("cancelled.");
+            return 0;
+        }
+        else if (key_pressed(KEY_RETURN))
+        {
+            if (!has_focus)
+            {
+                continue;
+            }
+            play_enter_sound();
+            return current_item + 1;
+        }
+    }
+    return -1;
+}
+    string get_item_description(int index)
+    {
+        string desc = items[index].name;
+        if (speak_position)
+            desc += ", " + string(index + 1) + " of " + string(items.length());
+        return desc;
+    }
+}
+void create_menu(menu@ m)
+{
+    m.clear_all_items();
+    m.enable_up_and_down = true;
+    m.enable_left_and_right = true;
+    m.enable_home_and_end = true;
+    m.wrap_navigation = true;
+    m.speak_position = false;
+    m.click_sound = "";
+    m.close_sound = "";
+    m.enter_sound = "";
+    m.edge_sound  = "";
+    m.open_sound  = "";
+    m.wrap_sound  = "";
+}

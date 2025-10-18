@@ -1,4 +1,5 @@
 New in 1.0.
+Replaced the old array-based menu system with a newer blocking style menu system.
 Added back virtual dialogs to reveal input prompts.
 Added some beeping indicators to the main interface and the pack key generation menu.
 Recoded the main interface and the pack key generation menu.
