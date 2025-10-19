@@ -28,7 +28,7 @@ string version="1.0";
 file f, temp;
 pack pfile, obj;
 sound@ progress_sound;
-menu m;
+custom_menu cm;
 sound_pool spool;
 
 typedef uint8 usmall; typedef int8 small;

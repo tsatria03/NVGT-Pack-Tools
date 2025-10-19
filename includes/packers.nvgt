@@ -187,23 +187,23 @@ wait(500);
 void generate_pack_key()
 {
     create_menu();
-    m.add_item("Letters only", "let");
-    m.add_item("Letters and Numbers", "letnum");
-    m.add_item("Letters and Symbols", "letsym");
-    m.add_item("Letters, Numbers and Symbols", "all");
-    m.add_item("Numbers only", "num");
-    m.add_item("Numbers and Symbols", "numsym");
-    m.add_item("Symbols only", "sym");
-    m.add_item("Go back", "back");
+    cm.add_item("Letters only", "let");
+    cm.add_item("Letters and Numbers", "letnum");
+    cm.add_item("Letters and Symbols", "letsym");
+    cm.add_item("Letters, Numbers and Symbols", "all");
+    cm.add_item("Numbers only", "num");
+    cm.add_item("Numbers and Symbols", "numsym");
+    cm.add_item("Symbols only", "sym");
+    cm.add_item("Go back", "back");
     int start_pos = 0;
     if (last_menu_id != "")
     {
-        int found = m.find_item_by_id(last_menu_id);
+        int found = cm.find_item_by_id(last_menu_id);
         if (found != -1)
             start_pos = found;
     }
-    int choice = m.run("Pack key generator menu. Choose a character set you'd like to use.", start_pos);
-    string genem = m.get_item_id(choice);
+    int choice = cm.run("Pack key generator menu. Choose a character set you'd like to use.", start_pos);
+    string genem = cm.get_item_id(choice);
     last_menu_id = genem;
     if (choice == 0 || genem == "back")
     {

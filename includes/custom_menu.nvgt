@@ -1,21 +1,21 @@
-class menu_item
+class custom_menu_item
 {
     string name;
     string id;
-    menu_item(string item_name, string item_id = "")
+    custom_menu_item(string item_name, string item_id = "")
     {
         name = item_name;
         id = item_id;
     }
 }
-class menu
+class custom_menu
 {
-    menu_item@[] items;
+    custom_menu_item@[] items;
     bool enable_up_and_down = true;
     bool enable_left_and_right = true;
     bool enable_home_and_end = true;
 bool enable_first_letter_navigation = true;
-    bool wrap_navigation = true;
+    bool wrap = true;
     bool speak_position = true;
     string click_sound;
     string close_sound;
@@ -137,7 +137,7 @@ void find_searched_item()
 }
     int add_item(string name, string id = "")
     {
-        items.insert_last(menu_item(name, id));
+        items.insert_last(custom_menu_item(name, id));
         return items.length();
     }
 int find_item_by_id(string id)
@@ -209,7 +209,7 @@ find_searched_item();
                     continue;
                 }
                 int prev = current_item;
-                if (wrap_navigation)
+                if (wrap)
                 {
                     current_item = (current_item - 1 + items.length()) % items.length();
                     if (current_item == int(items.length()) - 1 && prev == 0)
@@ -236,7 +236,7 @@ find_searched_item();
                     continue;
                 }
                 int prev = current_item;
-                if (wrap_navigation)
+                if (wrap)
                 {
                     current_item = (current_item + 1) % items.length();
                     if (current_item == 0 && prev == int(items.length()) - 1)
@@ -305,19 +305,19 @@ find_searched_item();
         return -1;
     }
 }
-void create_menu(menu@ m=m)
+void create_menu(custom_menu@ cm=cm)
 {
-    m.clear_all_items();
-    m.enable_up_and_down = true;
-    m.enable_left_and_right = true;
-    m.enable_home_and_end = true;
-     m.enable_first_letter_navigation=true;
-    m.wrap_navigation = true;
-    m.speak_position = false;
-    m.click_sound = "";
-    m.close_sound = "";
-    m.enter_sound = "";
-    m.edge_sound  = "";
-    m.open_sound  = "";
-    m.wrap_sound  = "";
+    cm.clear_all_items();
+    cm.enable_up_and_down = true;
+    cm.enable_left_and_right = true;
+    cm.enable_home_and_end = true;
+     cm.enable_first_letter_navigation=true;
+    cm.wrap = true;
+    cm.speak_position = false;
+    cm.click_sound = "";
+    cm.close_sound = "";
+    cm.enter_sound = "";
+    cm.edge_sound  = "";
+    cm.open_sound  = "";
+    cm.wrap_sound  = "";
 }
