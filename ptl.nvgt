@@ -28,7 +28,7 @@ void maintool()
         create_pack();
     else if (main == "exp")
         extract_pack();
-    else if (main == "gpk")
+    else if (main == "gpk")       
         generate_pack_key();
     else if (main == "lcp")
         list_pack();
