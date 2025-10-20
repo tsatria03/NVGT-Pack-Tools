@@ -8,6 +8,7 @@
 #include"custom_menu.nvgt"
 #include"extrafuncts.nvgt"
 #include"packers.nvgt"
+#include"setupmenu.nvgt"
 #include"speech.nvgt"
 #include"token_gen.nvgt"
 
@@ -28,7 +29,7 @@ string version="1.0";
 file f, temp;
 pack pfile, obj;
 sound@ progress_sound;
-custom_menu cm;
+custom_menu m;
 sound_pool spool;
 
 typedef uint8 usmall; typedef int8 small;

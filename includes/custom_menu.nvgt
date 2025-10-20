@@ -24,14 +24,18 @@ class custom_menu_item
         id = item_id;
     }
 }
+
 class custom_menu
 {
     custom_menu_item@[] items;
 bool music_added = false;
     int current_item = 0;
+int last_letter_index = -1;
 int voltime = 50;
 int volkeyup = KEY_PRIOR;
 int volkeydown = KEY_NEXT;
+string intro_text = "";
+string last_letter_pressed = "";
 sound music;
 timer voltimer;
     bool enable_up_and_down = true;
@@ -61,11 +65,19 @@ void stop_music()
 {
 music.stop();
 }
-void add_music(string musicpath) {
-if (music.playing == false) {
-if(!music.load(musicpath))
-music.set_volume(menumusvolume);
-music_added = true;
+void add_music(string musicpath)
+{
+if (music.playing == false)
+{
+if (music.load(musicpath))
+{
+    music.set_volume(menumusvolume);
+    music_added = true;
+}
+else
+{
+return;
+}
 }
 }
 void play_music()
@@ -77,70 +89,87 @@ music.play_looped();
     void play_click_sound()
     {
         if (click_sound != "") spool.play_stationary(click_sound, false);
-        else beep_percentage(50);
+else
+beep_percentage(50);
     }
     void play_close_sound()
     {
         if (close_sound != "") spool.play_stationary(close_sound, false);
-        else beep_percentage(50);
+else
+beep_percentage(50);
     }
     void play_enter_sound()
     {
         if (enter_sound != "") spool.play_stationary(enter_sound, false);
-        else beep_percentage(50);
+else
+beep_percentage(50);
     }
     void play_edge_sound()
     {
         if (edge_sound != "") spool.play_stationary(edge_sound, false);
-        else beep_percentage(50);
+else
+beep_percentage(50);
     }
     void play_open_sound()
     {
         if (open_sound != "") spool.play_stationary(open_sound, false);
-        else beep_percentage(50);
+else
+beep_percentage(50);
     }
     void play_wrap_sound()
     {
         if (wrap_sound != "") spool.play_stationary(wrap_sound, false);
-        else beep_percentage(50);
+else
+beep_percentage(50);
     }
     void clear_all_items()
     {
         items.resize(0);
     }
-void find_first_letter_item()
+void reset(bool completely=false)
+{
+    if(completely==true) stop_music();
+    clear_all_items();
+    current_item = 0;
+    last_letter_index = -1;
+    last_letter_pressed = "";
+    last_search_query = "";
+}
+void find_first_letter_item(bool &inout has_focus)
 {
     string chars = get_characters();
-    if (chars != "")
-    {
-        string letter = chars.substr(0, 1).lower();
-        int start = current_item + 1;
-        bool found = false;
-        for (int i = start; i < int(items.length()); i++)
-        {
-            if (items[i].name.lower().starts_with(letter))
-            {
-                current_item = i;
-                speak(items[current_item].name);
-                play_click_sound();
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-        {
-            for (int i = 0; i <= current_item; i++)
-            {
-                if (items[i].name.lower().starts_with(letter))
-                {
-                    current_item = i;
-                    speak(items[current_item].name);
-                    play_click_sound();
-                    break;
-                }
-            }
-        }
+    if (chars == "") return;
+    string letter = chars.substr(0, 1).lower();
+    int start_index;
+    if (letter == last_letter_pressed)
+        start_index = (current_item + 1) % items.length();
+    else {
+        start_index = 0;
+        last_letter_pressed = letter;
     }
+        if (has_focus && items[current_item].name.lower().starts_with(letter))
+            {
+start_index = (current_item + 1) % items.length();
+        }
+else
+            {
+start_index = 0;
+    }
+int index = start_index;
+    bool found = false;
+    do {
+        if (items[index].name.lower().starts_with(letter)) {
+            current_item = index;
+            speak(items[current_item].name);
+            play_click_sound();
+            has_focus = true;
+            found = true;
+            break;
+        }
+        index = (index + 1) % items.length();
+    } while (index != start_index);
+    if (!found)
+return;
 }
 void find_searched_item()
 {
@@ -210,10 +239,10 @@ int find_item_by_id(string id)
     {
         string desc = items[index].name;
         if (speak_position)
-            desc += ", " + string(index + 1) + " of " + string(items.length());
+            desc += ". " + string(index + 1) + " of " + string(items.length());
         return desc;
     }
-    int run(string title, int start_position = 0, bool start_focused = true)
+    int run(int start_position = 0, bool start_focused = false)
     {
         if (items.length() == 0)
         {
@@ -224,14 +253,14 @@ int find_item_by_id(string id)
             current_item = start_position;
         else
             current_item = 0;
-        if (!start_focused && title != "") speak(title);
+        if (!start_focused && intro_text != "") speak(intro_text);
         play_open_sound();
         bool has_focus = start_focused;
         if (has_focus && start_position >= 0 && start_position < int(items.length()))
 if (has_focus)
-    speak(title+" "+get_item_description(current_item));
-else if (title != "")
-    speak(title);
+    speak(intro_text+" "+get_item_description(current_item));
+else if (intro_text != "")
+    speak(intro_text);
 music.set_volume(menumusvolume);
 music.play_looped();
         while (true)
@@ -239,7 +268,7 @@ music.play_looped();
             wait(5);
 if (enable_first_letter_navigation)
 {
-find_first_letter_item();
+find_first_letter_item(has_focus);
 }
 if(key_pressed(KEY_F3))
 {
@@ -259,69 +288,131 @@ music.set_volume(menumusvolume);
 //writepreffs();
 voltimer.restart();
 }
-if(alt_is_down() and key_down(KEY_LEFT) and key_repeating(KEY_RIGHT) or alt_is_down() and key_down(KEY_RIGHT) and key_repeating(KEY_LEFT))
-{
-speak("music volume, "+menumusvolume);
-}
             if (key_repeating(KEY_TAB))
             {
-                beep_percentage(50);
-                if (title != "") speak(title);
+beep_percentage(50);
+                if (intro_text != "") speak(intro_text);
             }
-            else if ((key_repeating(KEY_UP) || key_repeating(KEY_LEFT)) && enable_up_and_down)
-            {
-                if (!has_focus)
-                {
-                    has_focus = true;
-                    play_click_sound();
-                    speak(get_item_description(current_item));
-                    continue;
-                }
-                int prev = current_item;
-                if (enable_wrapping)
-                {
-                    current_item = (current_item - 1 + items.length()) % items.length();
-                    if (current_item == int(items.length()) - 1 && prev == 0)
-                        play_wrap_sound();
-                    else
-                        play_click_sound();
-                }
-                else if (current_item > 0)
-                {
-                    current_item--;
-                    play_click_sound();
-                }
-                else
-                    play_edge_sound();
-                speak(get_item_description(current_item));
-            }
-            else if ((key_repeating(KEY_DOWN) || key_repeating(KEY_RIGHT)) && enable_up_and_down)
-            {
-                if (!has_focus)
-                {
-                    has_focus = true;
-                    play_click_sound();
-                    speak(get_item_description(current_item));
-                    continue;
-                }
-                int prev = current_item;
-                if (enable_wrapping)
-                {
-                    current_item = (current_item + 1) % items.length();
-                    if (current_item == 0 && prev == int(items.length()) - 1)
-                        play_wrap_sound();
-                    else
-                        play_click_sound();
-                }
-                else if (current_item < int(items.length()) - 1)
-                {
-                    current_item++;
-                    play_click_sound();
-                }
-                else
-                    play_edge_sound();
-                speak(get_item_description(current_item));
-            }
+else if ((key_repeating(KEY_DOWN)) && enable_up_and_down)
+{
+    if (!has_focus)
+    {
+        has_focus = true;
+        play_click_sound();
+        speak(get_item_description(current_item));
+        continue;
+    }
+    int prev = current_item;
+    if (enable_wrapping)
+    {
+        current_item = (current_item + 1) % items.length();
+        if (current_item == 0 && prev == int(items.length()) - 1)
+            play_wrap_sound();
+        else
+            play_click_sound();
+    }
+    else if (current_item < int(items.length()) - 1)
+    {
+        current_item++;
+        play_click_sound();
+    }
+    else
+        play_edge_sound();
+    speak(get_item_description(current_item));
+}
+else if ((key_repeating(KEY_UP)) && enable_up_and_down)
+{
+    if (!has_focus)
+    {
+        has_focus = true;
+        if (enable_wrapping)
+        {
+            current_item = items.length() - 1;
+            play_click_sound();
+            speak(get_item_description(current_item));
+            continue;
+        }
+    }
+    int prev = current_item;
+    if (enable_wrapping)
+    {
+        current_item = (current_item - 1 + items.length()) % items.length();
+        if (current_item == int(items.length()) - 1 && prev == 0)
+            play_wrap_sound();
+        else
+            play_click_sound();
+    }
+    else if (current_item > 0)
+    {
+        current_item--;
+        play_click_sound();
+    }
+    else
+    {
+        play_edge_sound();
+    }
+    speak(get_item_description(current_item));
+}
+else if ((key_repeating(KEY_RIGHT)) && enable_left_and_right)
+{
+    if (!has_focus)
+    {
+        has_focus = true;
+        play_click_sound();
+        speak(get_item_description(current_item));
+        continue;
+    }
+    int prev = current_item;
+    if (enable_wrapping)
+    {
+        current_item = (current_item + 1) % items.length();
+        if (current_item == 0 && prev == int(items.length()) - 1)
+            play_wrap_sound();
+        else
+            play_click_sound();
+    }
+    else if (current_item < int(items.length()) - 1)
+    {
+        current_item++;
+        play_click_sound();
+    }
+    else
+        play_edge_sound();
+    speak(get_item_description(current_item));
+}
+else if ((key_repeating(KEY_LEFT)) && enable_left_and_right)
+{
+    if (!has_focus)
+    {
+        has_focus = true;
+        if (enable_wrapping)
+        {
+            current_item = items.length() - 1;
+            play_click_sound();
+            speak(get_item_description(current_item));
+            continue;
+        }
+    }
+    int prev = current_item;
+    if (enable_wrapping)
+    {
+        current_item = (current_item - 1 + items.length()) % items.length();
+        if (current_item == int(items.length()) - 1 && prev == 0)
+            play_wrap_sound();
+        else
+            play_click_sound();
+    }
+    else if (current_item > 0)
+    {
+        current_item--;
+        play_click_sound();
+    }
+    else
+    {
+        play_edge_sound();
+    }
+    speak(get_item_description(current_item));
+}
             else if (key_repeating(KEY_HOME) && enable_home_and_end)
             {
                 if (!has_focus)
@@ -334,66 +425,35 @@ speak("music volume, "+menumusvolume);
                 if (current_item != 0)
                 {
                     current_item = 0;
+                }
                     play_click_sound();
                     speak(get_item_description(current_item));
-                }
-                else
-                    play_edge_sound();
-            }
-            else if (key_repeating(KEY_END) && enable_home_and_end)
-            {
-                if (!has_focus)
-                {
-                    has_focus = true;
-                    play_click_sound();
-                    speak(get_item_description(current_item));
-                    continue;
-                }
-                if (current_item != int(items.length()) - 1)
-                {
-                    current_item = items.length() - 1;
-                    play_click_sound();
-                    speak(get_item_description(current_item));
-                }
-                else
-                    play_edge_sound();
-            }
-            else if (key_pressed(KEY_ESCAPE))
+}
+else if (key_repeating(KEY_END) && enable_home_and_end)
+{
+    if (!has_focus)
+    {
+        has_focus = true;
+    }
+    if (current_item != int(items.length()) - 1)
+    {
+        current_item = items.length() - 1;
+    }
+        play_click_sound();
+    speak(get_item_description(current_item));
+}
+                    else if (key_repeating(KEY_ESCAPE))
             {
                 play_close_sound();
-                speak("Cancelled.");
-                return 0;
+                return -1;
             }
-            else if (key_pressed(KEY_RETURN))
+            else if (key_repeating(KEY_RETURN))
             {
                 if (!has_focus) continue;
                 play_enter_sound();
-                return current_item + 1;
+                return current_item +1;
             }
         }
         return -1;
     }
-}
-void create_menu(custom_menu@ cm=cm, bool music_added = true)
-{
-if (music_added)
-{
-cm.add_music("menumusic.ogg");
-} else
-{
-cm.add_music("");
-}
-    cm.clear_all_items();
-    cm.enable_up_and_down = true;
-    cm.enable_left_and_right = true;
-    cm.enable_home_and_end = true;
-    cm.enable_wrapping = true;
-     cm.enable_first_letter_navigation=true;
-    cm.speak_position = false;
-    cm.click_sound = "";
-    cm.close_sound = "";
-    cm.enter_sound = "";
-    cm.edge_sound  = "";
-    cm.open_sound  = "";
-    cm.wrap_sound  = "";
 }
